@@ -1,0 +1,26 @@
+.idea/
+.vscode/
+*.iml
+
+backend/.gradle/
+backend/build/
+
+frontend/node_modules/
+frontend/dist/
+
+.env
+.env.*
+!.env.example
+
+# Local runtime artifacts and private credentials must never be published.
+*.log
+*.hprof
+*.jfr
+*.pem
+*.key
+*.p12
+*.pfx
+*.dump
+backups/
+.DS_Store
+Thumbs.db

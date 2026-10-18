@@ -1,0 +1,91 @@
+name: drivecare
+
+x-logging: &bounded-logging
+  driver: local
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  mariadb:
+    logging: *bounded-logging
+    image: mariadb:11.8
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:13306:3306"
+    environment:
+      MARIADB_DATABASE: drivecare
+      MARIADB_USER: drivecare
+      MARIADB_PASSWORD: ${DB_PASSWORD:-drivecare-local}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-drivecare-root-local}
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  redis:
+    logging: *bounded-logging
+    image: redis:8.2-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:16379:6379"
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-drivecare-redis-local}"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a '${REDIS_PASSWORD:-drivecare-redis-local}' ping | grep PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    logging: *bounded-logging
+    build:
+      context: ./backend
+    restart: unless-stopped
+    environment:
+      DB_URL: jdbc:mariadb://mariadb:3306/drivecare
+      DB_USERNAME: drivecare
+      DB_PASSWORD: ${DB_PASSWORD:-drivecare-local}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-drivecare-redis-local}
+      APP_FRONTEND_ORIGIN: ${APP_ORIGIN:-http://localhost:3000}
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+      SESSION_TIMEOUT: ${SESSION_TIMEOUT:-30m}
+      LOGGING_STRUCTURED_FORMAT_CONSOLE: ${APP_LOG_FORMAT:-ecs}
+      APP_LOG_LEVEL: ${APP_LOG_LEVEL:-INFO}
+      SLOW_REQUEST_MS: ${SLOW_REQUEST_MS:-1000}
+      APP_TIME_ZONE: ${APP_TIME_ZONE:-Asia/Seoul}
+      NOTIFICATION_BATCH_SIZE: ${NOTIFICATION_BATCH_SIZE:-100}
+      NOTIFICATION_CRON: ${NOTIFICATION_CRON:-0 0 9 * * *}
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep UP"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  frontend:
+    logging: *bounded-logging
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  mariadb-data:
+  redis-data:

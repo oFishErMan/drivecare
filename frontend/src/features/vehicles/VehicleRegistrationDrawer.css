@@ -1,0 +1,138 @@
+.vehicle-registration-drawer {
+  position: fixed;
+  inset: 0 0 0 auto;
+  margin: 0;
+  padding: 0;
+  width: min(540px, 100%);
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  border: 0;
+  border-left: 1px solid #dfe7ed;
+  background: #fff;
+  color: #172b3a;
+  box-shadow: -16px 0 60px #122c4526;
+  overflow: hidden;
+}
+
+.vehicle-registration-drawer[open] {
+  display: flex;
+  flex-direction: column;
+  animation: vehicle-drawer-in 260ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.vehicle-registration-drawer::backdrop {
+  background: #122c4570;
+  animation: vehicle-backdrop-in 260ms ease-out both;
+}
+
+.vehicle-registration-drawer[data-state="closing"] {
+  animation: vehicle-drawer-out 220ms ease-in both;
+  pointer-events: none;
+}
+
+.vehicle-registration-drawer[data-state="closing"]::backdrop {
+  animation: vehicle-backdrop-out 220ms ease-in both;
+}
+
+.vehicle-drawer-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e6edf2;
+  background: #f8fafc;
+}
+
+.vehicle-drawer-toolbar > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #496171;
+}
+
+.vehicle-registration-drawer .vehicle-drawer-close {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid #dce5ec;
+  border-radius: 12px;
+  background: #fff;
+  color: #496171;
+}
+
+.vehicle-drawer-content {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.vehicle-registration-drawer .registration-panel {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+  padding: 28px;
+}
+
+.vehicle-draft-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 28px 28px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #f1f6fa;
+  color: #576d7e;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.vehicle-draft-hint .icon { flex-shrink: 0; margin-top: 1px; }
+
+@keyframes vehicle-drawer-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes vehicle-drawer-out {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+@keyframes vehicle-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes vehicle-backdrop-out { from { opacity: 1; } to { opacity: 0; } }
+
+@media (max-width: 600px) {
+  .vehicle-registration-drawer {
+    inset: auto 0 0;
+    width: 100%;
+    height: auto;
+    max-height: 94dvh;
+    border: 0;
+    border-top: 1px solid #dfe7ed;
+    border-radius: 24px 24px 0 0;
+  }
+  .vehicle-drawer-toolbar { padding: 12px 20px; }
+  .vehicle-registration-drawer .registration-panel { padding: 22px 20px; }
+  .vehicle-draft-hint { margin: 0 20px 20px; }
+  @keyframes vehicle-drawer-in {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  @keyframes vehicle-drawer-out {
+    from { transform: translateY(0); }
+    to { transform: translateY(100%); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vehicle-registration-drawer[open],
+  .vehicle-registration-drawer::backdrop { animation: none; }
+}

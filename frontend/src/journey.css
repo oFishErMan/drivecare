@@ -1,0 +1,115 @@
+/* Vehicle → maintenance → replacement: make the next action visible. */
+.vehicle-health {
+  margin: 18px 0 8px;
+  padding: 14px;
+  border: 1px solid #dbe5ee;
+  border-radius: 14px;
+  background: #f8fafc;
+}
+.vehicle-health > p {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 750;
+  line-height: 1.6;
+}
+.vehicle-health > p .icon { flex-shrink: 0; width: 17px; height: 17px; margin-top: 2px; }
+.health-overdue { background: #fff7f7; border-color: #fecaca; }
+.health-overdue > p { color: #b91c1c; }
+.health-due_soon { background: #fffbeb; border-color: #fde68a; }
+.health-due_soon > p { color: #92400e; }
+.health-good > p { color: #166534; }
+.vehicle-health > small { display: block; margin-top: 8px; color: #64748b; line-height: 1.6; }
+.vehicle-health-counts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  margin: 14px 0 0;
+}
+.vehicle-health-counts div { display: grid; gap: 5px; }
+.vehicle-health-counts dt { color: #64748b; font-size: 0.7rem; }
+.vehicle-health-counts dd { margin: 0; color: #334155; font-size: 1rem; font-weight: 800; }
+.vehicle-health > .link { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; margin-top: 8px; font-size: 0.78rem; color: #1d4ed8; text-align: left; }
+.vehicle-health > .link .icon { width: 15px; height: 15px; }
+.maintenance-registration-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, .52fr);
+  align-items: start;
+  gap: 24px;
+}
+.maintenance-registration-layout > * { min-width: 0; }
+.registration-preview {
+  box-sizing: border-box;
+  position: sticky;
+  top: 166px;
+  padding: 22px;
+  border: 1px solid #dbe5f0;
+  border-radius: 22px;
+  background: linear-gradient(160deg, #eff6ff, #fff 50%);
+  max-height: calc(100dvh - 210px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.preview-heading { display: flex; align-items: center; gap: 10px; }
+.preview-heading > div { min-width: 0; }
+.preview-heading h3 { margin: 3px 0 0; font-size: 1rem; line-height: 1.5; }
+.preview-icon { display: grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px; background: #dbeafe; color: #2563eb; }
+.preview-eyebrow { color: #1d4ed8; font-size: 0.7rem; font-weight: 700; }
+.preview-vehicle { margin: 20px 0 5px; font-size: 0.83rem; font-weight: 700; line-height: 1.6; overflow-wrap: anywhere; }
+.preview-category { margin: 0; font-size: 0.78rem; color: #64748b; line-height: 1.6; overflow-wrap: anywhere; }
+.preview-readiness { padding: 14px 0; margin: 14px 0; border-block: 1px solid #e2e8f0; }
+.preview-readiness > div { display: flex; justify-content: space-between; align-items: center; color: #475569; font-size: 0.75rem; }
+.preview-readiness > div > strong { color: #1d4ed8; font-variant-numeric: tabular-nums; }
+.preview-readiness progress { display: block; width: 100%; height: 6px; margin-top: 10px; border: 0; border-radius: 99px; overflow: hidden; background: #e2e8f0; accent-color: #2563eb; }
+.preview-readiness progress::-webkit-progress-bar { background: #e2e8f0; }
+.preview-readiness progress::-webkit-progress-value { background: #2563eb; border-radius: 99px; }
+.preview-readiness progress::-moz-progress-bar { background: #2563eb; border-radius: 99px; }
+.preview-ready { display: flex; align-items: center; gap: 6px; margin: 12px 0 0; color: #166534; font-size: 0.75rem; line-height: 1.6; }
+.preview-ready .icon { width: 16px; height: 16px; flex-shrink: 0; }
+.preview-checklist { padding: 8px 0 0; margin: 0; list-style: none; }
+.preview-checklist li { display: flex; align-items: center; gap: 7px; padding: 6px 0; color: #64748b; font-size: 0.77rem; }
+.preview-checklist li .icon { width: 16px; height: 16px; flex-shrink: 0; }
+.preview-checklist li small { margin-left: auto; flex-shrink: 0; font-size: 0.68rem; }
+.preview-calculations { display: grid; gap: 12px; }
+.preview-calculation { display: grid; gap: 7px; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; }
+.preview-calculation > span { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #475569; }
+.preview-calculation > span .icon { width: 16px; height: 16px; }
+.preview-calculation > strong { color: #0f172a; font-size: 1.2rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.preview-calculation > small { color: #64748b; font-size: 0.7rem; line-height: 1.6; }
+.preview-calculation > p { margin: 0; font-size: 0.8rem; line-height: 1.6; color: #1d4ed8; }
+.preview-calculation > .preview-formula { color: #64748b; font-size: 0.7rem; }
+.preview-calculation > .preview-reached { color: #b91c1c; }
+.preview-calculation > .preview-placeholder { color: #64748b; font-size: 0.75rem; }
+.preview-disclaimer { display: flex; align-items: flex-start; gap: 7px; margin: 16px 0 0; font-size: 0.72rem; line-height: 1.75; color: #64748b; }
+.preview-disclaimer .icon { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; }
+.existing-item-hint { display: flex; align-items: flex-start; gap: 9px; padding: 14px; border: 1px solid #bfdbfe; border-radius: 12px; background: #eff6ff; }
+.existing-item-hint > .icon { flex-shrink: 0; width: 18px; height: 18px; color: #2563eb; }
+.existing-item-hint > div { min-width: 0; }
+.existing-item-hint strong { color: #1e40af; font-size: 0.8rem; line-height: 1.6; }
+.existing-item-hint p { margin: 6px 0 0; color: #475569; font-size: 0.76rem; line-height: 1.7; }
+.existing-item-hint .link { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; color: #1d4ed8; font-size: 0.78rem; text-align: left; }
+.existing-item-hint .link .icon { width: 15px; height: 15px; }
+.today-record-action { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; margin-bottom: 10px; color: #1d4ed8; font-size: 0.78rem; text-align: left; }
+.today-record-action .icon { width: 16px; height: 16px; }
+.draft-retention-hint { margin: 0; color: #64748b; font-size: 0.75rem; line-height: 1.6; }
+.registration-odometer-context { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; }
+.registration-odometer-context .input-help { margin: 0; }
+.registration-odometer-context .link, .replacement-odometer-action { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; font-size: 0.75rem; color: #1d4ed8; text-align: left; }
+.registration-odometer-context .icon, .replacement-odometer-action .icon { width: 14px; height: 14px; }
+.odometer-current, .odometer-change { margin: 0; color: #475569; font-size: 0.78rem; line-height: 1.6; }
+.odometer-change { color: #1d4ed8; }
+.odometer-change.is-invalid { color: #b91c1c; }
+.category-filter-chip { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; margin-bottom: 16px; padding: 8px 12px; border: 1px solid #bfdbfe; border-radius: 999px; background: #eff6ff; color: #1d4ed8; font-size: 0.8rem; }
+.category-filter-chip .icon { width: 15px; height: 15px; }
+
+@media (max-width: 950px) {
+  .maintenance-registration-layout { grid-template-columns: minmax(0, 1fr); max-width: 780px; margin: 0 auto; }
+  .registration-preview { position: static; max-height: none; overflow: visible; }
+  .preview-calculations { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .registration-preview { padding: 20px; }
+  .preview-calculations { grid-template-columns: minmax(0, 1fr); }
+}
