@@ -1,6 +1,6 @@
 # DriveCare
 
-차량 주행거리와 소모품 교체주기를 관리하는 셀프호스팅 웹 애플리케이션입니다.
+주행거리와 교체주기를 기반으로 차량 소모품의 정비 시점을 관리하는 웹 서비스 | Spring Boot · React · MariaDB · Redis · Docker
 
 소스 구조와 기능 확장 방법은 [유지보수 가이드](docs/ARCHITECTURE.md)를 참고하세요.
 화면별 문제와 개선 이유는 [화면 검토 기획서](docs/PRODUCT_REVIEW.md), [디자인·개발 인계서](docs/DESIGN_HANDOFF.md)에 정리했습니다.
@@ -171,3 +171,7 @@ pnpm build
 - 브라우저 알림은 사용자가 알림 권한을 허용하고 웹 페이지가 열려 있을 때 표시됩니다.
 
 서비스 워커 기반의 백그라운드 Web Push는 별도의 VAPID 키와 HTTPS 구성이 필요하므로 현재 범위에는 포함하지 않았습니다.
+
+## 라이선스
+
+이 프로젝트는 [MIT License](LICENSE)를 따릅니다.
