@@ -3,8 +3,10 @@ import react from '@vitejs/plugin-react'
 
 // Local, read-only UI fixtures. No proxy, database connection, credentials or writes.
 const vehicles = [
-  { id: 901, manufacturer: '현대', model: '검수용 아반떼', modelYear: 2023, currentOdometerKm: 120100, monthlyAverageKm: 1500 },
-  { id: 902, manufacturer: '기아', model: '검수용 셀토스', modelYear: 2024, currentOdometerKm: 8500, monthlyAverageKm: null },
+  { id: 901, manufacturer: '현대', model: '검수용 아반떼', modelYear: 2023, currentOdometerKm: 120100, monthlyAverageKm: 1500,
+    odometerFreshness: { state: 'STALE', observedOn: '2026-09-30', ageDays: 35 } },
+  { id: 902, manufacturer: '기아', model: '검수용 셀토스', modelYear: 2024, currentOdometerKm: 8500, monthlyAverageKm: null,
+    odometerFreshness: { state: 'RECENT', observedOn: '2026-11-04', ageDays: 0 } },
 ]
 const items = [
   { id: 910, vehicleId: 901, category: 'CABIN_FILTER', productName: '검수용 에어컨 필터', lastReplacedOn: '2025-08-01', lastReplacedOdometerKm: 105000, intervalKm: 10000, intervalMonths: 12, purchaseUrl: null, revision: 0,
@@ -37,7 +39,12 @@ export default defineConfig({
         }
         if (path === '/api/auth/me') return send(200, { id: 99001, displayName: '화면 검수 계정', email: 'ui-qa@example.invalid' })
         if (path === '/api/auth/csrf') return send(200, { token: 'local-qa-not-a-real-token' })
-        if (path === '/api/vehicles') return send(200, scenario === 'empty' ? [] : vehicles)
+        if (path === '/api/vehicles') {
+          if (scenario === 'empty') return send(200, [])
+          if (scenario === 'freshness-unknown') return send(200, vehicles.map((vehicle) => vehicle.id === 901
+            ? { ...vehicle, odometerFreshness: { state: 'UNKNOWN', observedOn: null, ageDays: null } } : vehicle))
+          return send(200, vehicles)
+        }
         if (path === '/api/maintenance-items') return send(200, scenario === 'empty' ? [] : items)
         if (path === '/api/notifications') return send(200, [])
         if (/^\/api\/vehicles\/\d+\/history$/.test(path)) {

@@ -3,11 +3,14 @@ import { Icon } from '../../components/Icon'
 import { OdometerForm } from './OdometerForm'
 import { VehicleHistoryDialog } from './VehicleHistoryDialog'
 import { vehicleMaintenanceSummary } from '../../domain/maintenanceView'
+import { odometerFreshnessLabel } from '../../domain/odometerFreshness'
+import './OdometerFreshness.css'
 
 export function VehicleCard({ vehicle, items, onUpdated, onRegister, onViewMaintenance }) {
   const [historyOpen, setHistoryOpen] = useState(false)
   const historyTrigger = useRef(null)
   const { counts, state } = vehicleMaintenanceSummary(items, vehicle.id)
+  const freshness = odometerFreshnessLabel(vehicle.odometerFreshness)
   const summaryLabel = {
     EMPTY: '아직 관리 중인 소모품이 없어요',
     OVERDUE: '교체가 필요한 소모품이 있어요',
@@ -40,6 +43,10 @@ export function VehicleCard({ vehicle, items, onUpdated, onRegister, onViewMaint
           <strong>{vehicle.monthlyAverageKm == null ? '미입력' : `${vehicle.monthlyAverageKm.toLocaleString()} km`}</strong>
         </div>
       </div>
+      <p className={`odometer-basis${freshness.needsUpdate ? ' needs-update' : ''}`}>
+        <Icon name={freshness.needsUpdate ? 'info' : 'gauge'} />
+        <span>{freshness.label}{freshness.needsUpdate && <small>오늘 계기판 값을 확인해 주세요.</small>}</span>
+      </p>
       <div className={`vehicle-health health-${state.toLowerCase()}`}>
         <p><Icon name={state === 'GOOD' ? 'check' : state === 'EMPTY' ? 'tool' : 'info'} />{summaryLabel}</p>
         {!!counts.ALL && <>

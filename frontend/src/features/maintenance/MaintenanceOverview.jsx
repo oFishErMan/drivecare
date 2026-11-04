@@ -3,6 +3,8 @@ import { EmptyState } from '../../components/ui'
 import { MaintenanceCard } from './MaintenanceCard'
 import { EMPTY_FILTERS, maintenanceCounts, selectMaintenance, vehicleLabel } from '../../domain/maintenanceView'
 import { categoryLabel } from '../../domain/maintenance'
+import { mileageVehiclesNeedingUpdate, odometerFreshnessLabel } from '../../domain/odometerFreshness'
+import '../vehicles/OdometerFreshness.css'
 
 const states = [
   { value: 'ALL', label: '전체' },
@@ -17,6 +19,7 @@ export function MaintenanceOverview({ items, vehicles, filters, onFilter, onRegi
     && (!filters.category || item.category === filters.category))
   const counts = maintenanceCounts(scope)
   const visible = selectMaintenance(items, vehicles, filters)
+  const needsMileageUpdate = mileageVehiclesNeedingUpdate(visible, vehicles)
   const update = (patch) => onFilter({ ...filters, ...patch, itemId: null })
   const reset = () => onFilter({ ...EMPTY_FILTERS })
 
@@ -74,6 +77,15 @@ export function MaintenanceOverview({ items, vehicles, filters, onFilter, onRegi
             onClick={() => update({ category: '' })} aria-label={`${categoryLabel(filters.category)} 종류 필터 해제`}>
             {categoryLabel(filters.category)} <Icon name="close" />
           </button>}
+          {needsMileageUpdate.length > 0 && <aside className="odometer-basis-notice" aria-label="주행거리 기준 안내">
+            <h3><Icon name="info" /> 계기판 값을 다시 확인해 주세요</h3>
+            <p>아래 차량의 거리 기준은 마지막으로 입력한 계기판 값으로 계산돼요. 기간 기준은 그대로 적용돼요.</p>
+            <ul>{needsMileageUpdate.map((vehicle) => <li key={vehicle.id}>
+              <div><strong>{vehicleLabel(vehicle)}</strong><small>{odometerFreshnessLabel(vehicle.odometerFreshness).label}</small></div>
+              <button type="button" className="link" onClick={() => onVehicle(vehicle.id)}
+                aria-label={`${vehicleLabel(vehicle)} 주행거리 갱신하러 가기`}>갱신하러 가기 <Icon name="arrow" /></button>
+            </li>)}</ul>
+          </aside>}
           <div className="grid cards maintenance-cards">
             {visible.map((item) => (
               <MaintenanceCard item={item} key={item.id}

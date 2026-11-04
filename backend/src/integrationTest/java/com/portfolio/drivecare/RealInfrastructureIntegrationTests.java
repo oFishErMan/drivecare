@@ -15,6 +15,10 @@ import com.portfolio.drivecare.user.AppUser;
 import com.portfolio.drivecare.user.AppUserRepository;
 import com.portfolio.drivecare.vehicle.Vehicle;
 import com.portfolio.drivecare.vehicle.VehicleRepository;
+import com.portfolio.drivecare.vehicle.VehicleService;
+import com.portfolio.drivecare.vehicle.VehicleDtos.CreateVehicleRequest;
+import com.portfolio.drivecare.vehicle.VehicleDtos.RecordOdometerRequest;
+import com.portfolio.drivecare.vehicle.OdometerFreshness;
 import com.portfolio.drivecare.maintenance.MaintenanceService;
 import com.portfolio.drivecare.maintenance.VehicleHistoryService;
 import com.portfolio.drivecare.maintenance.MaintenanceCategory;
@@ -48,6 +52,8 @@ class RealInfrastructureIntegrationTests {
 	StringRedisTemplate redisTemplate;
 	@Autowired AppUserRepository users;
 	@Autowired VehicleRepository vehicles;
+	@Autowired VehicleService vehicleService;
+	@Autowired java.time.Clock clock;
 	@Autowired MaintenanceService maintenance;
 	@Autowired VehicleHistoryService history;
 	@Autowired com.portfolio.drivecare.notification.MaintenanceNotificationService notifications;
@@ -127,5 +133,22 @@ class RealInfrastructureIntegrationTests {
 		});
 		assertThat(new String(history.export(user.getId(), vehicle.getId()), java.nio.charset.StandardCharsets.UTF_8))
 				.contains("2025-01-01,ENGINE_OIL,\"엔진오일\",110000,8000,,관리 종료");
+	}
+
+	@Test
+	void observationProjectionMatchesTheCurrentMileageOnMariaDb() {
+		var user = users.save(new AppUser("odometer-integration@example.test", "unused", "계기판 검증"));
+		var vehicle = vehicleService.create(user.getId(), new CreateVehicleRequest("현대", "아반떼", 2023, 120000, null));
+		var oldDay = LocalDate.now(clock).minusDays(31);
+		var changed = vehicleService.recordOdometer(user.getId(), vehicle.id(), new RecordOdometerRequest(oldDay, 120100));
+		assertThat(changed.odometerFreshness().observedOn()).isEqualTo(oldDay);
+		assertThat(vehicleService.list(user.getId())).singleElement().satisfies(row -> {
+			assertThat(row.currentOdometerKm()).isEqualTo(120100);
+			assertThat(row.odometerFreshness().state()).isEqualTo(OdometerFreshness.State.STALE);
+		});
+		var confirmed = vehicleService.recordOdometer(user.getId(), vehicle.id(), new RecordOdometerRequest(null, 120100));
+		assertThat(confirmed.odometerFreshness().ageDays()).isZero();
+		assertThat(vehicleService.list(user.getId()).get(0).odometerFreshness().state())
+				.isEqualTo(OdometerFreshness.State.RECENT);
 	}
 }

@@ -19,15 +19,16 @@ public final class VehicleDtos {
 	}
 
 	public record RecordOdometerRequest(
-			@NotNull LocalDate recordedOn,
-			@Min(0) int odometerKm) {
+			LocalDate recordedOn,
+			@NotNull @Min(0) Integer odometerKm) {
 	}
 
 	public record VehicleResponse(Long id, String manufacturer, String model, Integer modelYear,
-			int currentOdometerKm, Integer monthlyAverageKm) {
-		static VehicleResponse from(Vehicle vehicle) {
+			int currentOdometerKm, Integer monthlyAverageKm, OdometerFreshness odometerFreshness) {
+		static VehicleResponse from(Vehicle vehicle, LocalDate observedOn, LocalDate today) {
 			return new VehicleResponse(vehicle.getId(), vehicle.getManufacturer(), vehicle.getModel(),
-					vehicle.getModelYear(), vehicle.getCurrentOdometerKm(), vehicle.getManualMonthlyAverageKm());
+					vehicle.getModelYear(), vehicle.getCurrentOdometerKm(), vehicle.getManualMonthlyAverageKm(),
+					OdometerFreshness.evaluate(observedOn, today));
 		}
 	}
 }

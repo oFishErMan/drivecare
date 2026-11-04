@@ -1,0 +1,59 @@
+.odometer-basis,
+.odometer-basis-notice {
+  border: 1px solid #dce4ed;
+  border-radius: 12px;
+  background: #f7f9fc;
+  color: #42576c;
+}
+
+.odometer-basis {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  padding: 9px 10px;
+  font-size: .83rem;
+}
+
+.odometer-basis.needs-update,
+.odometer-basis-notice {
+  color: #643d16;
+  border-color: #edd9b8;
+  background: #fff8ed;
+}
+
+.odometer-basis small,
+.odometer-basis-notice small {
+  display: block;
+}
+
+.odometer-basis-notice {
+  padding: 14px 16px;
+  margin: 0 0 14px;
+}
+
+.odometer-basis-notice h3,
+.odometer-basis-notice p {
+  margin: 0 0 6px;
+}
+
+.odometer-basis-notice h3 {
+  font-size: .98rem;
+}
+
+.odometer-basis-notice ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.odometer-basis-notice li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  padding: 8px 0;
+  border-top: 1px solid #edd9b8;
+  overflow-wrap: anywhere;
+}

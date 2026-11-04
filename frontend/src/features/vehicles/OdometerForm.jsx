@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Field, Feedback } from '../../components/ui'
 import { useSaveFeedback } from '../../hooks/useSaveFeedback'
-import { localDate } from '../../domain/forms'
 import { Icon } from '../../components/Icon'
 
 export function OdometerForm({ vehicle, onUpdated }) {
@@ -14,7 +13,7 @@ export function OdometerForm({ vehicle, onUpdated }) {
     event.preventDefault()
     await save(
       `/api/vehicles/${vehicle.id}/odometer`,
-      { recordedOn: localDate(), odometerKm: Number(odometer) },
+      { odometerKm: Number(odometer) },
       '주행거리를 갱신하고 소모품 상태를 다시 계산했습니다.',
       () => {
         setOpen(false)
@@ -53,7 +52,7 @@ export function OdometerForm({ vehicle, onUpdated }) {
             <p className="odometer-current">기존 기록 <strong>{vehicle.currentOdometerKm.toLocaleString()}km</strong></p>
             {increase !== null && <p className={`odometer-change${increase < 0 ? ' is-invalid' : ''}`} role="status">
               {increase < 0 ? '기존 기록보다 작은 값은 저장할 수 없어요.'
-                : increase === 0 ? '기존 기록과 같은 주행거리예요.'
+                : increase === 0 ? '같은 값도 오늘 다시 확인한 기록으로 저장할 수 있어요.'
                   : `기존보다 ${increase.toLocaleString()}km 증가해요.`}
             </p>}
             <p className="input-help">이번에 주행한 거리가 아닌 계기판의 누적 거리를 입력하세요. 저장하면 이 차량의 소모품 상태도 다시 계산됩니다.</p>
