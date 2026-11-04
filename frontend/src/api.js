@@ -43,7 +43,7 @@ export function responseError(path, status, data) {
   return new ApiError(message, status)
 }
 
-async function request(path, options = {}) {
+async function request(path, options = {}, responseType = 'json') {
   let response
   try {
     response = await fetch(path, {
@@ -57,6 +57,16 @@ async function request(path, options = {}) {
         ? '서버 응답이 늦어지고 있습니다. 잠시 후 다시 시도해 주세요.'
         : '서버에 연결할 수 없습니다. 인터넷 연결을 확인하고 잠시 후 다시 시도해 주세요.',
     )
+  }
+  if (response.ok && responseType === 'csv') {
+    const mediaType = response.headers.get('content-type')?.split(';')[0]?.trim().toLowerCase()
+    if (mediaType !== 'text/csv')
+      throw new ApiError('CSV 파일을 받지 못했습니다. 잠시 후 다시 시도해 주세요.')
+    try {
+      return await response.blob()
+    } catch {
+      throw new ApiError('파일을 받는 중 연결이 끊겼습니다. 다시 시도해 주세요.')
+    }
   }
   if (response.status === 204) return null
   let data
@@ -94,6 +104,10 @@ async function ensureCsrf() {
     csrfToken = data.token
   }
   return csrfToken
+}
+
+export function fetchCsv(path) {
+  return request(path, { headers: { Accept: 'text/csv, application/problem+json' } }, 'csv')
 }
 
 export async function api(path, options = {}) {

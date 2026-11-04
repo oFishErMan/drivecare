@@ -5,6 +5,9 @@
 - 기본: http://127.0.0.1:3001/qa/#vehicles
 - 차량 없음: http://127.0.0.1:3001/qa/?scenario=empty#maintenance-status
 - 접힌 구매 링크의 필드 오류: http://127.0.0.1:3001/qa/?scenario=field-error#maintenance-form
+- 차량 교체 이력 조회 실패: http://127.0.0.1:3001/qa/?scenario=history-error#vehicles
+
+차량 관리의 첫 차량은 가상 교체 기록·관리 종료 표시·샘플 CSV를, 두 번째 차량은 빈 이력을 검수하는 데 사용한다.
 
 기본 화면은 차량 2대, 첫 차량의 소모품 3개(교체 필요/임박/정상 각 1개)를 사용한다.
 백엔드 프록시가 없고 모든 변경 요청은 명시적으로 거절한다. 저장 성공이나 DB 정합성을 검증하는 환경이 아니다.

@@ -40,6 +40,19 @@ export default defineConfig({
         if (path === '/api/vehicles') return send(200, scenario === 'empty' ? [] : vehicles)
         if (path === '/api/maintenance-items') return send(200, scenario === 'empty' ? [] : items)
         if (path === '/api/notifications') return send(200, [])
+        if (/^\/api\/vehicles\/\d+\/history$/.test(path)) {
+          if (scenario === 'history-error') return send(503, { detail: '이력 조회 오류 검수' })
+          const entries = path.includes('/901/') ? items.map((item) => ({
+            id: item.id, category: item.category, productName: item.productName,
+            replacedOn: item.lastReplacedOn, odometerKm: item.lastReplacedOdometerKm,
+            active: item.id !== 910,
+          })).reverse() : []
+          return send(200, { entries, hasNext: false })
+        }
+        if (path === '/api/vehicles/901/history/export') {
+          response.setHeader('Content-Type', 'text/csv;charset=utf-8')
+          return response.end('\uFEFF교체일,종류 코드,제품명\r\n2026-06-01,ENGINE_OIL,검수용 엔진오일\r\n')
+        }
         if (/^\/api\/maintenance-items\/\d+\/replacements$/.test(path)) return send(200, [])
         return send(404, { detail: '검수용 응답이 없는 경로입니다.' })
       })

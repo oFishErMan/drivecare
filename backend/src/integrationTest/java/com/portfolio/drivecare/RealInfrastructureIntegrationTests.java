@@ -16,6 +16,7 @@ import com.portfolio.drivecare.user.AppUserRepository;
 import com.portfolio.drivecare.vehicle.Vehicle;
 import com.portfolio.drivecare.vehicle.VehicleRepository;
 import com.portfolio.drivecare.maintenance.MaintenanceService;
+import com.portfolio.drivecare.maintenance.VehicleHistoryService;
 import com.portfolio.drivecare.maintenance.MaintenanceCategory;
 import com.portfolio.drivecare.maintenance.MaintenanceDtos.CreateMaintenanceRequest;
 import com.portfolio.drivecare.maintenance.MaintenanceDtos.ReplacementRequest;
@@ -48,6 +49,7 @@ class RealInfrastructureIntegrationTests {
 	@Autowired AppUserRepository users;
 	@Autowired VehicleRepository vehicles;
 	@Autowired MaintenanceService maintenance;
+	@Autowired VehicleHistoryService history;
 	@Autowired com.portfolio.drivecare.notification.MaintenanceNotificationService notifications;
 
 	@Test
@@ -110,5 +112,20 @@ class RealInfrastructureIntegrationTests {
 
 		redisTemplate.opsForValue().set("drivecare:integration-test", "ok");
 		assertThat(redisTemplate.opsForValue().get("drivecare:integration-test")).isEqualTo("ok");
+	}
+
+	@Test
+	void archivedReplacementIsProjectedAndExportedOnMariaDb() {
+		var user = users.save(new AppUser("history-integration@example.test", "unused", "이력 검증"));
+		var vehicle = vehicles.save(new Vehicle(user, "현대", "아반떼", 2023, 120000, null));
+		var item = maintenance.create(user.getId(), new CreateMaintenanceRequest(vehicle.getId(),
+				MaintenanceCategory.ENGINE_OIL, "엔진오일", LocalDate.of(2025, 1, 1), 110000, 8000, null, null));
+		maintenance.delete(user.getId(), item.id(), item.revision());
+		assertThat(history.list(user.getId(), vehicle.getId(), 0).entries()).singleElement().satisfies(entry -> {
+			assertThat(entry.active()).isFalse();
+			assertThat(entry.odometerKm()).isEqualTo(110000);
+		});
+		assertThat(new String(history.export(user.getId(), vehicle.getId()), java.nio.charset.StandardCharsets.UTF_8))
+				.contains("2025-01-01,ENGINE_OIL,\"엔진오일\",110000,8000,,관리 종료");
 	}
 }

@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 	List<Vehicle> findAllByOwnerIdOrderByCreatedAtDesc(Long ownerId);
 	Optional<Vehicle> findByIdAndOwnerId(Long id, Long ownerId);
+	boolean existsByIdAndOwnerId(Long id, Long ownerId);
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("select vehicle from Vehicle vehicle where vehicle.id = :id and vehicle.owner.id = :ownerId")

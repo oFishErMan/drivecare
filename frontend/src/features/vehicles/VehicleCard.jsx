@@ -1,8 +1,12 @@
+import { useRef, useState } from 'react'
 import { Icon } from '../../components/Icon'
 import { OdometerForm } from './OdometerForm'
+import { VehicleHistoryDialog } from './VehicleHistoryDialog'
 import { vehicleMaintenanceSummary } from '../../domain/maintenanceView'
 
 export function VehicleCard({ vehicle, items, onUpdated, onRegister, onViewMaintenance }) {
+  const [historyOpen, setHistoryOpen] = useState(false)
+  const historyTrigger = useRef(null)
   const { counts, state } = vehicleMaintenanceSummary(items, vehicle.id)
   const summaryLabel = {
     EMPTY: '아직 관리 중인 소모품이 없어요',
@@ -54,6 +58,12 @@ export function VehicleCard({ vehicle, items, onUpdated, onRegister, onViewMaint
       <button type="button" className="secondary-button vehicle-register-item" onClick={() => onRegister(vehicle.id)}>
         <Icon name="plus" /> 이 차량에 소모품 등록
       </button>
+      <button type="button" ref={historyTrigger} className="link vehicle-history-trigger" aria-haspopup="dialog"
+        onClick={() => setHistoryOpen(true)}>차량 교체 이력 보기</button>
+      {historyOpen && <VehicleHistoryDialog vehicle={vehicle} onClose={() => {
+        setHistoryOpen(false)
+        historyTrigger.current?.focus({ preventScroll: true })
+      }} />}
     </article>
   )
 }

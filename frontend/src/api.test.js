@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { api } from './api.js'
+import { api, fetchCsv } from './api.js'
 
 const originalFetch = globalThis.fetch
 test.afterEach(() => {
@@ -104,4 +104,23 @@ test('서버 필드 오류를 입력 화면에 전달하고 문자열이 아닌 
     assert.equal(error.status, 400)
     return true
   })
+})
+
+test('교체 이력 CSV는 세션으로 조회하며 본문을 파일로 받는다', async () => {
+  globalThis.fetch = async (path, options) => {
+    assert.equal(path, '/api/vehicles/1/history/export')
+    assert.equal(options.credentials, 'include')
+    assert.match(options.headers.Accept, /text\/csv/)
+    return new Response('교체일,제품명', { headers: { 'Content-Type': 'text/csv;charset=UTF-8' } })
+  }
+  assert.equal(await (await fetchCsv('/api/vehicles/1/history/export')).text(), '교체일,제품명')
+})
+
+test('CSV 요청의 API 오류는 다운로드하지 않고 공통 오류로 처리한다', async () => {
+  globalThis.fetch = async () => json({ detail: '교체 이력이 5,000건을 초과했습니다.' }, 422)
+  await assert.rejects(fetchCsv('/api/vehicles/1/history/export'), /5,000건/)
+  globalThis.fetch = async () => new Response('<html>로그인</html>', {
+    headers: { 'Content-Type': 'text/html' },
+  })
+  await assert.rejects(fetchCsv('/api/vehicles/1/history/export'), /CSV 파일을 받지 못했습니다/)
 })

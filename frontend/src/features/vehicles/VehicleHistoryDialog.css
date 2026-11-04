@@ -1,0 +1,81 @@
+.vehicle-history-trigger {
+  align-self: flex-start;
+}
+
+.vehicle-history-dialog {
+  width: min(680px, calc(100% - 24px));
+  max-height: min(80dvh, 720px);
+  padding: 0;
+  border: 1px solid #dce4ed;
+  border-radius: 18px;
+  color: #172b40;
+  background: #fff;
+  overscroll-behavior: contain;
+  box-shadow: 0 24px 64px #13243930;
+}
+
+.vehicle-history-dialog::backdrop {
+  background: #10243a80;
+}
+
+.vehicle-history-content {
+  padding: clamp(16px, 4vw, 28px);
+}
+
+.vehicle-history-header,
+.vehicle-history-footer,
+.vehicle-history-footer nav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.vehicle-history-header h3,
+.vehicle-history-list p {
+  margin: 0;
+}
+
+.vehicle-history-list {
+  list-style: none;
+  margin: 16px 0;
+  padding: 0;
+}
+
+.vehicle-history-list li {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  gap: 12px;
+  align-items: start;
+  border-top: 1px solid #dce4ed;
+  padding: 12px 0;
+  overflow-wrap: anywhere;
+}
+
+.vehicle-history-list time,
+.vehicle-history-list p,
+.vehicle-history-retired {
+  color: #516477;
+  font-size: .875rem;
+}
+
+.vehicle-history-retired {
+  margin-inline-start: 8px;
+}
+
+.vehicle-history-km {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .vehicle-history-list li {
+    grid-template-columns: minmax(0, 1fr) max-content;
+    gap: 5px 10px;
+  }
+
+  .vehicle-history-list time {
+    grid-column: 1 / -1;
+  }
+}
